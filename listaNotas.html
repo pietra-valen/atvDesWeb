@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div class="conteiner">
+
+        <h1>Minhas notas</h1>
+
+        <!--passo 1: criar entrada-->
+
+        <div class="entrada">
+
+            <input type="text" id="nota" placeholder="Digite sua nota">
+            <button id="btnAdicionar">Adicionar</button>
+            <button id="btnRemoverTodas">Remover Todas</button>
+
+        </div>
+
+        <!--passo2: apresentar as notas-->
+
+        <ul id="listaNotas">
+            <!--vazio-->
+        </ul>
+
+    </div>
+
+    <script>
+        //ELEMENTOS HTML
+
+        const listaNotas = document.querySelector('#listaNotas')
+
+        const campoNota = document.querySelector('#nota')
+
+        const btnAdicionar = document.querySelector('#btnAdicionar')
+
+        const btnRemoverTodas = document.querySelector('#btnRemoverTodas')
+
+        //CARREGAR NOTAS
+
+        let notas = JSON.parse(
+            localStorage.getItem('notas')
+        )
+
+        if (notas == null) {
+            notas = []
+        }
+
+        //ADD NOTAS
+
+        function adicionarNota(nota) {
+
+            const texto = campoNota.value.trim()
+
+            if (texto == "") {
+                alert('Digite uma nota!!!!!!!!!!!!!')
+                return
+            }
+
+            const novaNota = {
+                texto: texto,
+                concluida: false
+            }
+
+            notas.push(novaNota)
+
+            localStorage.setItem(
+                'notas',
+                JSON.stringify(notas)
+            )
+
+            campoNota.value = ''
+
+            exibirNotas()
+
+        }
+
+        //EXIBIR NOTAS
+
+        function exibirNotas() {
+
+            listaNotas.innerHTML = ''
+
+            if (notas.length == 0) {
+                listaNotas.textContent = 'Nenhuma nota cadastrada'
+                return
+            }
+
+            notas.forEach(function (nota, indice) {
+
+                const item = document.createElement('li')
+
+                //texto
+                const texto = document.createElement('span')
+                texto.textContent = nota.texto
+
+                texto.classList.add('texto-nota')
+
+                if (nota.concluida) {
+                    texto.classList.add('concluida')
+                }
+
+                //botão remover
+                const btnRemover = document.createElement('button')
+
+                btnRemover.textContent = 'Remover'
+
+                btnRemover.addEventListener('click', function () {
+
+                    removerNota(indice)
+
+                })
+
+
+                item.appendChild(texto)
+                item.appendChild(btnRemover)
+                listaNotas.appendChild(item)
+
+            })
+
+        }
+
+        //REMOVER NOTAS
+        function removerNota(indice) {
+
+            notas.splice(indice, 1)
+            localStorage.setItem(
+                'notas',
+                JSON.stringify(notas)
+            )
+
+            exibirNotas()
+        }
+
+        function removerTodas() {
+            notas = []
+            localStorage.setItem(
+                'notas',
+                JSON.stringify(notas)
+            )
+
+            exibirNotas()
+        }
+
+
+
+        //EVENTOS
+
+        btnAdicionar.addEventListener('click', adicionarNota)
+        btnRemoverTodas.addEventListener('click', removerTodas)
+        exibirNotas()
+
+    </script>
+
+</body>
+
+</html>
